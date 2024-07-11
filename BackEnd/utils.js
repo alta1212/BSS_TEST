@@ -1,13 +1,29 @@
 const axios =require("axios");
-
+const moment = require('moment');
 const getProductsSale = (req,res) => {
    axios.get(`${process.env.BASE_URL}phone`).then((respone) => {
-      res.status(200).send(respone.data[0]);
+      const phone =respone.data[0];
+      const currentTime = moment();
+
+      const phoneStartSell = moment(phone.timeStartSell, 'DD/MM/YYYY HH:mm:ss');
+      const phoneEndSell = moment(phone.timeEndSell, 'DD/MM/YYYY HH:mm:ss');
+  
+      if(currentTime.isBetween(phoneStartSell, phoneEndSell))
+      {
+         res.status(200).send(phone);
+
+      }
+      else{
+         res.sendStatus(204);
+      }
+      
    }).catch((err) => {
       console.log(err)
       res.status(500).send("server error");
    });
 };
+
+
 
 const RegisterSale  = (req,res) => {
 
